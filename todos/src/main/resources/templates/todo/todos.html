@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/app.css}">
+    <title>TODO</title>
+</head>
+<body>
+<h3>TODOリスト</h3>
+
+<section>
+    <a th:href="@{/todos/{userId}/formcreate(userId=${userId})}">作成</a>
+    <div th:each="todo: ${todos}" class="todolist, title">
+        <div th:text="${todo.title}" class="inline-block"></div>
+        <p th:text="${todo.description}" class="top"></p>
+        <hr>
+    </div>
+</section>
+
+</body>
+</html>
