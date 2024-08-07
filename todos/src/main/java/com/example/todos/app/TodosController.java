@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,22 +65,22 @@ public class TodosController {
         if (bindingResult.hasErrors()) {
             return showCreateTodos(userId, model);
         }
-        Todo todo = new Todo();
-        todo.setTitle(form.getTitle());              //入力されたtitleをtodosEntityにセット
-        todo.setDescription(form.getDescription());  //入力されたdescriptionをtodosEntityにセット
+        Todo todos = new Todo();
+        todos.setTitle(form.getTitle());              //入力されたtitleをtodosEntityにセット
+        todos.setDescription(form.getDescription());  //入力されたdescriptionをtodosEntityにセット
         if (optionalUser.isPresent()) {
             User user = optionalUser.get(); // OptionalからUserを取り出す
-            todo.setUser(user); // Userオブジェクトを設定
+            todos.setUser(user); // Userオブジェクトを設定
         } else {
             // Userが見つからない場合の処理
             throw new RuntimeException("User not found with id: " + userId);
         }
 
-        todo.setDueDate(form.getDueDate());
+        todos.setDueDate(todos.getDueDate());
 
 
         try {
-            todosService.save(todo);
+            todosService.save(todos);
         } catch (DataAccessException e) {
             model.addAttribute("error", "データベースアクセスエラーが発生しました: " + e.getMessage());
             return showCreateTodos(userId, model);  // エラーページのビュー名を指定してください
@@ -87,4 +91,54 @@ public class TodosController {
         return "redirect:/todos/{userId}";
     }
 
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String showEditForm(@PathVariable("userId") Integer userId, @PathVariable("id") Integer id, Model model) {
+        Optional<Todo> optionalTodos = todosService.findByIdAndUserId(id, userId);
+        if (optionalTodos.isPresent()) {
+            Todo todos = optionalTodos.get();
+            TodoForm form = new TodoForm();
+            form.setTitle(todos.getTitle());
+            form.setDescription(todos.getDescription());
+            form.setDueDate(todos.getDueDate());
+
+            model.addAttribute("todoForm", form);
+            model.addAttribute("todoId", id);
+            model.addAttribute("userId", userId);
+            return "todo/edit";
+        } else {
+            throw new RuntimeException("Todo not found with id: " + id + " and userId: " + userId);
+        }
+    }
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
+    public String edit(
+            @Validated @ModelAttribute("todoForm") TodoForm form,
+            BindingResult bindingResult,
+            @PathVariable("userId") Integer userId,
+            @PathVariable("id") Integer id,
+            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            return showEditForm(userId, id, model);
+        }
+
+        Optional<Todo> optionalTodos = todosService.findByIdAndUserId(id, userId);
+        if (optionalTodos.isPresent()) {
+            Todo todos = optionalTodos.get();
+            todos.setTitle(form.getTitle());
+            todos.setDescription(form.getDescription());
+            todos.setDueDate(form.getDueDate());
+            try {
+                todosService.save(todos);
+            } catch (DataAccessException e) {
+                model.addAttribute("error", "データベースアクセスエラーが発生しました: " + e.getMessage());
+                return showEditForm(userId, id, model);
+            } catch (Exception e) {
+                model.addAttribute("error", "予期しないエラーが発生しました: " + e.getMessage());
+                return showEditForm(userId, id, model);
+            }
+            return "redirect:/todos/{userId}";
+        } else {
+            throw new RuntimeException("Todo not found with id: " + id + " and userId: " + userId);
+        }
+    }
 }

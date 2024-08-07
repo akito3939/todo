@@ -13,6 +13,8 @@
     <div th:each="todo: ${todos}" class="todolist, title">
         <div th:text="${todo.title}" class="inline-block"></div>
         <p th:text="${todo.description}" class="top"></p>
+        <p th:text="${todo.dueDate}"></p>
+        <a th:href="@{/todos/{userId}/edit/{id}(userId=${userId},id=${todo.id})}">Edit</a>
         <hr>
     </div>
 </section>

@@ -24,7 +24,7 @@
     </div>
     <div class="mt-3">
         <button type="submit">作成</button>
-        <a href="./todos.html" th:href="@{/todos}">キャンセル</a>
+        <a href="./todos.html" th:href="@{/todos/{userId}(userId=${userId})}">キャンセル</a>
     </div>
 </form>
 </body>
