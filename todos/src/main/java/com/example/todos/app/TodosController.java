@@ -76,7 +76,7 @@ public class TodosController {
             throw new RuntimeException("User not found with id: " + userId);
         }
 
-        todos.setDueDate(todos.getDueDate());
+        todos.setDueDate(form.getDueDate());
 
 
         try {
@@ -141,4 +141,20 @@ public class TodosController {
             throw new RuntimeException("Todo not found with id: " + id + " and userId: " + userId);
         }
     }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    public String deleteTodo(
+            @PathVariable("userId") Integer userId,
+            @PathVariable("id") Integer id,
+            Model model) {
+
+        Optional<Todo> optionalTodo = todosService.findByIdAndUserId(id, userId);
+        if (optionalTodo.isPresent()) {
+            todosService.delete(optionalTodo.get());
+        } else {
+            model.addAttribute("error", "Invalid Todo ID: " + id + " or User ID: " + userId);
+        }
+        return "redirect:/todos/{userId}";
+    }
+
 }

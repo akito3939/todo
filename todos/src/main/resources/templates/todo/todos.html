@@ -15,6 +15,9 @@
         <p th:text="${todo.description}" class="top"></p>
         <p th:text="${todo.dueDate}"></p>
         <a th:href="@{/todos/{userId}/edit/{id}(userId=${userId},id=${todo.id})}">Edit</a>
+        <form th:action="@{/todos/{userId}/delete/{id}(userId=${userId},id=${todo.id})}" method="post" style="display:inline;">
+            <button type="submit">削除</button>
+        </form>
         <hr>
     </div>
 </section>
