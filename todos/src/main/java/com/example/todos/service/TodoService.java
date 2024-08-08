@@ -3,6 +3,7 @@ package com.example.todos.service;
 import com.example.todos.domain.model.Todo;
 import com.example.todos.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +20,17 @@ public class TodoService {
         return todoRepository.findByUserId(userId);
     }
 
-    public void save(Todo todos) {
-        todoRepository.save(todos);
+    public void save(Todo todo) {
+        todoRepository.save(todo)   ;
     }
 
 
     public Optional<Todo> findByIdAndUserId(Integer id, Integer userId) {
         return todoRepository.findByIdAndUserId(id, userId);
     }
+
+    public void delete(Todo todo) throws DataAccessException {
+        todoRepository.delete(todo);
+    }
 }
+

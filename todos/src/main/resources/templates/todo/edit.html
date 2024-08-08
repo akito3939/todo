@@ -21,11 +21,11 @@
         <input type="datetime-local" id="dueDate" th:field="*{dueDate}" />
     </div>
     <div>
-        <button type="submit">Save</button>
+        <button type="submit">登録</button>
     </div>
 </form>
 
-<a th:href="@{/todos/{userId}(userId=${userId})}">Back to list</a>
+<a th:href="@{/todos/{userId}(userId=${userId})}">戻る</a>
 
 </body>
 </html>
