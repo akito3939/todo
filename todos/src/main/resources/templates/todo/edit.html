@@ -6,7 +6,7 @@
 <body>
 <h1>Edit ToDo</h1>
 <p>Due Date: <span th:text="${todoForm.dueDate}"></span></p>
-<h1>aaa</h1>
+
 <form th:action="@{/todos/{userId}/edit/{todoId}(userId=${userId}, todoId=${todoId})}" th:object="${todoForm}" method="post">
     <div>
         <label for="title">Title</label>
